@@ -1,0 +1,17 @@
+# Java compilation output
+/out/
+*.class
+
+
+# VS Code / Code OSS
+.vscode/
+.history/
+
+# Neovim
+*.swp
+*.swo 
+*~
+
+# Kate
+*.kate-swp
+
