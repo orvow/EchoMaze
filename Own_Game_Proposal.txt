@@ -1,0 +1,137 @@
+# PROG 1700 Final Project: Your Own Game (Proposal)
+
+**Game name:** Echo Maze: Ancient Energy Temple
+
+**What is it? (2 or 3 sentences)**
+
+Echo Maze is a first person dungeon exploration game where the player navigates an ancient temple, collects three energy crystals, and defeats a Temple Guardian to escape before running out of energy. It uses software raycasting with the Digital Differential Analyzer (DDA) algorithm to calculate wall intersections and distances from the player's perspective. These calculations are used to render a believable 3D environment using ASCII characters within the Java console.
+
+
+## YOUR DATA FILE
+
+**File name:** `res/maze.txt`
+
+**3 sample lines:**
+
+```text
+############
+#P...#.....#
+#.##.#.###.#
+```
+
+The file contains multiple maze layouts separated by blank lines. `#` represents walls, `.` represents open spaces, `P` is the player, `K` represents crystals, `B` represents batteries, and `E` is the exit guarded by the Temple Guardian.
+
+## HOW YOUR GAME USES EACH REQUIRED SKILL
+
+### Part 1
+
+**1. Reading your data file into an array:**
+
+Read the maze layouts from a text file into an array of strings, then convert each layout into a 2D character array.
+
+**2. Where you use a 2D array (a board, a grid, one row per question...):**
+
+A `char[][]` represents the maze and stores wall positions, open spaces, collectibles, and the exit.
+
+**3. One more thing your game does at the start (Dungeon Escape: finds where the player starts):**
+
+Select a maze layout, locate the player's starting position, and initialize their facing direction.
+
+### Part 2
+
+**4. A number the player types, and its valid range (Dungeon Escape: hit points, 1 to 200):**
+
+The player chooses a difficulty from 1 to 3, providing 60, 50, or 40 starting energy points.
+
+**5. What one turn looks like:**
+
+The player enters W to move forward, S to move backward, or A/D to turn left or right, followed by Enter. The game processes the command, updates the player's state, and redraws the first person view. Successful movement costs one energy point.
+
+**6. A move that isn't allowed (Dungeon Escape: walking into a wall):**
+
+The player cannot walk through walls or outside the maze boundaries. Invalid movements are rejected without consuming energy.
+
+### Part 3
+
+**7. The main rule of your game (Dungeon Escape: the fight loop):**
+
+The player must collect three energy crystals and defeat the Temple Guardian guarding the exit. Combat is turn based, with the player choosing to attack or defend while the Guardian automatically retaliates until either the Guardian's health or the player's energy reaches zero.
+
+**8. An ArrayList that keeps track of something during the game:**
+
+An `ArrayList<String>` tracks collected crystals using their positions in the maze.
+
+**9. What changes after a turn (Dungeon Escape: a beaten monster is removed):**
+
+The player's position or direction changes, energy may decrease, and collected items are removed from the maze. During combat, the Guardian's health and the player's energy are updated after each turn.
+
+### Part 4
+
+**10. One extra thing in the game (Dungeon Escape: the potion):**
+
+Collectible energy batteries restore 10 energy points, up to the player's starting energy limit.
+
+**11. How the player wins and loses:**
+
+The player wins by collecting all three crystals, defeating the Temple Guardian, and escaping through the exit. The player loses if their energy reaches zero during exploration or combat.
+
+**12. How the score is worked out:**
+
+Each crystal awards 100 points. Defeating the Guardian and escaping awards another 200 points, plus 2 points per remaining energy point.
+
+## METHODS YOU PLAN TO WRITE (at least 5: name, what it takes, what it returns)
+
+1. `loadMazes(String filename)`: Reads the file and returns an `ArrayList<char[][]>` containing the maze layouts.
+
+2. `selectMaze(ArrayList<char[][]> maps)`: Selects and returns a `char[][]` maze.
+
+3. `findStart(char[][] map)`: Returns the starting coordinates as an `int[]`.
+
+4. `canMove(char[][] map, int row, int col)`: Returns whether a position is walkable (`boolean`).
+
+5. `processTurn(char command, char[][] map, int[] player)`: Updates the player's position or direction and returns whether a successful movement occurred (`boolean`).
+
+6. `collectItems(char[][] map, int row, int col, ArrayList<String> crystals, int energy, int maxEnergy)`: Updates collected items and returns the player's updated energy (`int`).
+
+7. `fightGuardian(Scanner input, int energy)`: Runs the Guardian encounter using attack and defend commands. Returns the player's remaining energy (`int`), or zero if defeated.
+
+8. `castRay(char[][] map, double x, double y, double angle)`: Calculates the distance to the nearest wall and returns a `double`.
+
+9. `renderScene(char[][] map, int[] player)`: Generates a first person view of the maze using ASCII characters and returns a `char[][]`.
+
+10. `printFrame(char[][] frame)`: Prints the rendered scene to the console. Returns `void`.
+
+11. `hasWon(int crystals, boolean guardianDefeated)`: Checks whether the player has completed the objective and returns a `boolean`.
+
+12. `calculateScore(int crystals, int energy, boolean escaped)`: Calculates and returns the final score (`int`).
+
+## RANDOM
+
+**Will your game use Random? If yes, for what?**
+
+Yes. Random selects one of several predefined maze layouts at startup, making repeated playthroughs less predictable. A `RANDOM_ENABLED` boolean constant at the top of `App.java` disables randomization and selects the first maze for consistent testing.
+
+## ENHANCEMENTS YOU MIGHT ADD (optional)
+
+- Detailed procedural stone textures, carvings, and rune patterns.
+- Optional monochrome Unicode rendering using half block and quadrant characters for improved visual detail.
+- Perspective correct floors and ceilings.
+- Distance based shading and atmospheric effects.
+- Perspective scaled crystals and portal sprites.
+- Procedurally generated maze layouts.
+
+Pure ASCII rendering will be the default, allowing the game to run in both Windows PowerShell and Linux terminals without requiring graphics APIs, special terminal features, or external libraries.
+
+## TO BE APPROVED
+
+**It runs in the console, all in one App.java:**
+
+The game uses only the Java 17 standard library. All game logic and rendering will be implemented in a single `App.java`, with no external graphics APIs or additional Java source files. Input uses standard console commands followed by Enter.
+
+**Every numbered line has a real answer:**
+
+All 12 requirements are addressed, including file input, arrays, movement, validation, ArrayLists, combat, item interactions, win/loss conditions, and scoring.
+
+**It's about the same size as Dungeon Escape:**
+
+The core gameplay is comparable in scope, featuring a maze, player movement, energy management, collectibles, turn based combat, an exit, and scoring. The more advanced software rendering is primarily a visual enhancement rather than additional gameplay complexity.
