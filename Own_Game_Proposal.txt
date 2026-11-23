@@ -83,21 +83,21 @@ Each crystal awards 100 points. Defeating the Guardian and escaping awards anoth
 
 1. `loadMazes(String filename)`: Reads the file and returns an `ArrayList<char[][]>` containing the maze layouts.
 
-2. `selectMaze(ArrayList<char[][]> maps)`: Selects and returns a `char[][]` maze.
+2. `selectMaze(ArrayList<char[][]> mazes)`: Selects and returns a `char[][]` maze.
 
-3. `findStart(char[][] map)`: Returns the starting coordinates as an `int[]`.
+3. `findStart(char[][] maze)`: Returns the starting coordinates as an `int[]`.
 
-4. `canMove(char[][] map, int row, int col)`: Returns whether a position is walkable (`boolean`).
+4. `canMove(char[][] maze, int row, int col)`: Returns whether a position is walkable (`boolean`).
 
-5. `processTurn(char command, char[][] map, int[] player)`: Updates the player's position or direction and returns whether a successful movement occurred (`boolean`).
+5. `processTurn(char command, char[][] maze, int[] player)`: Updates the player's position or direction and returns whether a successful movement occurred (`boolean`).
 
-6. `collectItems(char[][] map, int row, int col, ArrayList<String> crystals, int energy, int maxEnergy)`: Updates collected items and returns the player's updated energy (`int`).
+6. `collectItems(char[][] maze, int row, int col, ArrayList<String> crystals, int energy, int maxEnergy)`: Updates collected items and returns the player's updated energy (`int`).
 
 7. `fightGuardian(Scanner input, int energy)`: Runs the Guardian encounter using attack and defend commands. Returns the player's remaining energy (`int`), or zero if defeated.
 
-8. `castRay(char[][] map, double x, double y, double angle)`: Calculates the distance to the nearest wall and returns a `double`.
+8. `castRay(char[][] maze, double x, double y, double angle)`: Calculates the distance to the nearest wall and returns a `double`.
 
-9. `renderScene(char[][] map, int[] player)`: Generates a first person view of the maze using ASCII characters and returns a `char[][]`.
+9. `renderScene(char[][] maze, int[] player)`: Generates a first person view of the maze using ASCII characters and returns a `char[][]`.
 
 10. `printFrame(char[][] frame)`: Prints the rendered scene to the console. Returns `void`.
 

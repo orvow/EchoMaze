@@ -20,34 +20,115 @@ public class App {
     // Print the initial active maze once
     printFrame(activeMaze);
 
-    int[] startPos = findStart(activeMaze);
-    int facingDirection = 1;
+    // Find the player starting position of the active maze
+    int[] currentPos = findStart(activeMaze);
 
-    System.out.printf("Initial facing direction: %d%nPlayer starting position: [row # %d][column # %d]%n",
+    // Initialize facing direction
+    enum FacingDirection {
+      NORTH,
+      EAST,
+      SOUTH,
+      WEST
+    }
+    FacingDirection facingDirection = FacingDirection.NORTH;
+
+    // If the second maze is selected we face south initially
+    if (activeMaze == mazes.get(1)) {
+      facingDirection = FacingDirection.SOUTH;
+    }
+
+    System.out.printf("Initial facing direction: %s%nPlayers current position: [row # %d][column # %d]%n",
         facingDirection,
-        startPos[0],
-        startPos[1]);
+        currentPos[0],
+        currentPos[1]);
 
     boolean isRunning = true;
     while (isRunning) {
-      System.out.println("Enter a command: Q to quit, A to turn left, D to turn right");
+      System.out.println(
+          "Enter a command: Q to quit, A to turn left, D to turn right, W to move forward, S to move backward");
+
       String keyPress = keyboardInput.nextLine().strip().toUpperCase();
+
+      int nextRow = currentPos[0];
+      int nextColumn = currentPos[1];
+
       if (keyPress.equals("Q")) {
         isRunning = false;
-      } else if (keyPress.equals("A")) {
-        if (facingDirection == 0) {
-          facingDirection = 3;
-        } else {
-          facingDirection--;
+      }
+      // Handle rotation
+
+      if (keyPress.equals("A")) {
+        System.out.println("Turning left");
+        switch (facingDirection) {
+          case NORTH -> facingDirection = FacingDirection.WEST;
+          case EAST -> facingDirection = FacingDirection.NORTH;
+          case SOUTH -> facingDirection = FacingDirection.EAST;
+          case WEST -> facingDirection = FacingDirection.SOUTH;
         }
       } else if (keyPress.equals("D")) {
-        if (facingDirection == 3) {
-          facingDirection = 0;
-        } else {
-          facingDirection++;
+        System.out.println("Turning right");
+        switch (facingDirection) {
+          case NORTH -> facingDirection = FacingDirection.EAST;
+          case EAST -> facingDirection = FacingDirection.SOUTH;
+          case SOUTH -> facingDirection = FacingDirection.WEST;
+          case WEST -> facingDirection = FacingDirection.NORTH;
         }
       }
-      System.out.println(facingDirection);
+      // Handle movement
+      if (keyPress.equals("W")) {
+        switch (facingDirection) {
+          case NORTH -> {
+            nextRow--;
+            System.out.println("Moving north");
+          }
+          case EAST -> {
+            nextColumn++;
+            System.out.println("Moving east");
+          }
+          case SOUTH -> {
+            nextRow++;
+            System.out.println("Moving south");
+          }
+          case WEST -> {
+            nextColumn--;
+            System.out.println("Moving west");
+          }
+        }
+      } else if (keyPress.equals("S")) {
+        switch (facingDirection) {
+          case SOUTH -> {
+            nextRow--;
+            System.out.println("Moving north");
+          }
+          case WEST -> {
+            nextColumn++;
+            System.out.println("Moving east");
+          }
+          case NORTH -> {
+            nextRow++;
+            System.out.println("Moving south");
+          }
+          case EAST -> {
+            nextColumn--;
+            System.out.println("Moving west");
+          }
+        }
+
+      }
+      // Handle collision
+      if (keyPress.equals("W") || keyPress.equals("S")) {
+        if (canMove(activeMaze, nextRow, nextColumn)) {
+          currentPos[0] = nextRow;
+          currentPos[1] = nextColumn;
+        } else {
+          System.out.println("Movement blocked!");
+        }
+      }
+
+      // Print the current facing direction
+      if (isRunning) {
+        System.out.printf("Facing Direction: %s%n", facingDirection);
+      }
     }
     keyboardInput.close();
   }
@@ -114,5 +195,18 @@ public class App {
     for (int row = 0; row < maze.length; row++) {
       System.out.println(maze[row]);
     }
+  }
+
+  static boolean canMove(char[][] maze, int row, int col) {
+    if (row < 0 || row >= maze.length) {
+      return false;
+    } else if (col < 0 || col >= maze[row].length) {
+      return false;
+    }
+    char character = maze[row][col];
+    if (character == '#') {
+      return false;
+    }
+    return true;
   }
 }
