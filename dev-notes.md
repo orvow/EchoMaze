@@ -8,9 +8,10 @@
 - [x] Implement collision detection with canMove()
 - [x] Refactor facingDirection handling to use an enum instead for better readability
 - [x] Implement processTurn and extract player movement, rotation, and collision handling out of main and into processTurn
-- [ ] Update player position on the printed maze
-- [ ] Implement difficulty selection and starting energy
+- [x] Update player position on the printed maze
+- [x] Implement difficulty selection and starting energy
 
 ## Learned
 - .strip() Removes leading or trailing whitespaces from a string. 
 - SomeEnum.values() returns an array of enum constants in their declared order. An index can be used to access a specific constant (e.g., `FacingDirection.values()[2]` returns `SOUTH`).
+- .clone() creates a separate copy of an array, allowing modifications without changing the original.

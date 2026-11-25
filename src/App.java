@@ -16,6 +16,7 @@ public class App {
   static class Player {
     int row;
     int column;
+    int energy;
     FacingDirection facingDirection = FacingDirection.EAST;
   }
 
@@ -25,49 +26,75 @@ public class App {
     // Welcome the player
     System.out.println("Enter your name");
     String playerName = keyboardInput.nextLine();
-    System.out.printf("Welcome %s!%n", playerName);
+    System.out.printf("Welcome %s!\n", playerName);
 
     // Load the mazes file and select a random maze from it
     ArrayList<char[][]> mazes = loadMazes("res/mazes.txt");
     char[][] activeMaze = selectMaze(mazes);
 
-    // Print the initial active maze once
-    printFrame(activeMaze);
-
     // Find the player starting position of the active maze
     int[] currentPos = findStart(activeMaze);
+
+    // Prompt the player to select their difficulty
+    String selectedDifficulty = "";
+    while (!selectedDifficulty.equals("1") &&
+        !selectedDifficulty.equals("2") &&
+        !selectedDifficulty.equals("3")) {
+      System.out
+          .println("Select your difficulty:\n1. Easy   (60 energy)\n2. Normal (50 energy)\n3. Hard   (40 energy)");
+      selectedDifficulty = keyboardInput.nextLine().strip().toUpperCase();
+    }
 
     // Create the player
     Player player = new Player();
     player.row = currentPos[0];
     player.column = currentPos[1];
+    switch (selectedDifficulty) {
+      case "1" -> player.energy = 60;
+      case "2" -> player.energy = 50;
+      case "3" -> player.energy = 40;
+    }
 
     // If the second maze is selected we face south initially
     if (activeMaze == mazes.get(1)) {
       player.facingDirection = FacingDirection.SOUTH;
     }
 
-    System.out.printf("Initial facing direction: %s%nPlayers current position: [row # %d][column # %d]%n",
+    // Print the initial active maze once
+    printFrame(activeMaze, player);
+
+    // Clear the original player marker since position is now tracked by Player
+    activeMaze[player.row][player.column] = '.';
+
+    System.out.printf("Initial facing direction: %s\nPlayers current position: [row # %d][column # %d]\n",
         player.facingDirection,
         currentPos[0],
         currentPos[1]);
 
+    // Enter main loop
     boolean isRunning = true;
     while (isRunning) {
+
       System.out.println(
           "Enter a command: Q to quit, A to turn left, D to turn right, W to move forward, S to move backward");
 
       String command = keyboardInput.nextLine().strip().toUpperCase();
 
+      boolean hasMoved = false;
       if (command.equals("Q")) {
         isRunning = false;
       } else {
-        processTurn(command, activeMaze, player);
+        hasMoved = processTurn(command, activeMaze, player);
       }
+      if (hasMoved) {
+        player.energy--;
+      }
+
+      printFrame(activeMaze, player);
 
       // Print the current facing direction
       if (isRunning) {
-        System.out.printf("Facing Direction: %s%n", player.facingDirection);
+        System.out.printf("Facing Direction: %s\nEnergy: %d\n", player.facingDirection, player.energy);
       }
     }
     keyboardInput.close();
@@ -131,9 +158,13 @@ public class App {
     return maze;
   }
 
-  static void printFrame(char[][] maze) {
+  static void printFrame(char[][] maze, Player player) {
     for (int row = 0; row < maze.length; row++) {
-      System.out.println(maze[row]);
+      char[] displayRow = maze[row].clone();
+      if (player.row == row) {
+        displayRow[player.column] = 'P';
+      }
+      System.out.println(displayRow);
     }
   }
 
@@ -171,6 +202,11 @@ public class App {
         case SOUTH -> player.facingDirection = FacingDirection.WEST;
         case WEST -> player.facingDirection = FacingDirection.NORTH;
       }
+    }
+    // Check if the player has energy
+    if (player.energy == 0 && (command.equals("W") || command.equals("S"))) {
+      System.out.println("No energy left!");
+      return false;
     }
     // Handle movement
     if (command.equals("W")) {
